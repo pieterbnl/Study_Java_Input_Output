@@ -1,6 +1,7 @@
 package com.pbe;
 
 import java.io.*;
+import static java.lang.Math.*;
 
 /** Study on Java I/O and related topics/keywords (try-with-resources, transient, volatile, instanceof, strictfp, assert)
  * Following Java The Complete Reference by Herbert Schildt i.c.w. (Udemy) Java programming masterclass for software developers Tim Buchalka.
@@ -121,92 +122,232 @@ import java.io.*;
 // Also, an exception in a try block may lead to another exception (occurring when the resource is closed in the finally clause).
 // Normally, the original exception is lost. But with try-with-resources, it's suppressed and can be obtained by using getSuppressed() as defined by Throwable.
 
+// Transient and volatile modifiers
+// Two modifiers to handle somewhat specialized situations:
+// 1. transient - the value of a variable that's declared transient need not persist when an object is stored.
+// For example: class C { transient int a; int b;}
+// When an object of type C is written to a persistent storage, contents of a will not be saved, but the contents of b will.
+// 2. volatile - modifier volatile tells the compiler that the variable modified by volatile can be changed unexpectedly by others parts of the program
+// This may be the case in multithreaded programs, where multiple threads can share the same variable.
+// Each thread can keep its own, private copy of the shared variable.
+// The master copy of the variable is updated at various times, for example when a synchronized method is entered.
+// When only the master is relevant, volatile can be used to tell the compiler that it must always use the master copy of the volatile variable/keep others up-to-date with it.
+
+// Using instanceof
+// Sometimes it's useful to know the type of an object during runtime (for example in situations that involves casting).
+// This can be obtained with the run-time operator instanceof.
+// The general form of the instanceof operator: objref instanceof type
+// With objref being a reference to an instance of a class and type being a class type.
+// If objref is of the specified type or can be cast into the specified type, instanceof operator evaluates to true.
+// Using the instanceof operator can be especially useful when writing generalized routines that operate on objects of a complex class hierarchy.
+
+// Native methods
+// The native keyword is used to declare native code methods (i.e. to call a subroutine that is written in a language other than Java).
+// Once declared, these methods can be called from inside the Java program as any other Java method would be called.
+// The mechanism to integrate native code with a Java program is called the Java Native Interface JNI)
+// After declaring a native method (for example: public native int method();) a complex series of steps is required to link the native method with the Java code.
+// See Java documentation.
+
+// Static import
+// The feature 'static import' expands the capabilities of the import keyword.
+// By following import with the keyword static, an import statement can be used to import the static members of a class or interface.
+// Using static import, it's possible to refer to static members directly by their names, without having to qualify them with the name of their class.
+// This simplifies and shortens the syntax.
+//
+// There are two forms of the import static statement:
+// 1. import static pkg.type-name.static-member-name;
+// Type-name is the name of the class or interface that contains the desired static member. Its full package name is specified by pkg. The member by static-member-name.
+// 2. import static pkg.type-name.*;
+// Imports all static members of a given class or interface, which can be handy when many methods or fields defined by a class are used.
+//
+// It's possible to import both the static members of classes and interfaces defined by the Java API, as well as own created.
+// Static import is to be used very sparingly.
+// Only use it when requiring frequent access to static members from one or two classes.
+// When overusing the static import feature, it can make your program unreadable and unmaintainable, polluting its namespace with all the static members that are imported.
+// Especially over time it will be hard to know which class a static member comes from
+// Importing all of the static members from a class can be particularly harmful to readability.
+// When needing only one or two members, import them individually.
+// Used appropriately, static import can improve a program's readability, by removing the boilerplate of repetition of class names.
+
+// Invoking overloaded constructors through this()
+// It's sometimes useful for one constructor to invoke another. This is accomplished by using another form of the 'this' keyword: this(arg-list)
+// When this() is executed, the overloaded constructor that matches the parameter list specified by arg-list is executed first.
+// Next, if there are any statements inside the original constructor, they are executed.
+// The call to this() must be the first statement within the constructor!
+//
+// Invoking overloaded constructors through this() can prevent unnecessary duplication of code, which decreases the class loading time.
+// Using this() can also help structure code when constructors contain a large amount of duplicate code.
+// At the same time, constructors that call this() will execute a bit slower, because the call and return mechanism used when the second constructor is invoked adds overhead.
+// This may be of relevance when a class is used to create a large number of objects, in the order of thousands.
+// It will then be about comparing the benefits of faster load time vs. increased time for object creation.
+// This() is most applicable to constructors that contain large amounts of initialization code, not those that just set the value of some fields.
+//
+// Restrictions with the use of this():
+// 1. You cannot use any instance variable of the constructors call to this().
+// 2. You cannot use super() and this() in the same constructor, because each must be the first statement in the constructor.
+
 public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        // **********************
-        // Example to read characters from console
-        // **********************
-        System.out.println("Reading characters from console, with BufferedReader");
-        char c;
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // create a BufferedReader using System.in
-        System.out.println("Enter characters, 'q' to quit.");
-        do {
-            c = (char) br.read(); // read() will return an int value of the character, casting it to chart to display as character
-            System.out.print(c); // display character
-        } while(c != 'q'); // upon inputting q, quite loop
-        System.out.println();
-
-//        // alternative to see integer input
+//        // **********************
+//        // Example to read characters from console
+//        // **********************
+//        System.out.println("Reading characters from console, with BufferedReader");
+//        char c;
+//        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // create a BufferedReader using System.in
 //        System.out.println("Enter characters, 'q' to quit.");
 //        do {
-//            System.out.print(br.read());
-//        } while(br.read() != 113);
+//            c = (char) br.read(); // read() will return an int value of the character, casting it to chart to display as character
+//            System.out.print(c); // display character
+//        } while(c != 'q'); // upon inputting q, quite loop
 //        System.out.println();
-
-        // **********************
-        // Example to read a string from console
-        // **********************
-        System.out.println("Reading a string from console, with BufferedReader");
-        String userinput;
-        System.out.println("Enter some lines of text");
-        System.out.println("Enter 'stop' to quit");
-        do {
-            userinput = br.readLine(); // using the BufferedReader (from the previous example) in combination with readLine, to read the input as a string
-            System.out.println(userinput); // display the string
-        } while(!userinput.equals("stop")); // upon inputting 'stop', quit the loop
-        System.out.println();
-
-        // **********************
-        // Example of a tiny text editor
-        // **********************
-        // Creating an array of String objects, reading up to 50 lines of text into the array, then displaying them.
-        String userinput2[] = new String[50]; // creating an array of String objects
-        System.out.println("Enter some lines of text");
-        System.out.println("Enter 'stop' to quit");
-        for (int i=0; i<50; i++) { // asking 50 times for a string input or breaking earlier upon input 'stop'
-            userinput2[i] = br.readLine();
-            if (userinput2[i].equals("stop")) break;
-        }
-        System.out.println("Here is your input:");
-        for (int i=0; i<50; i++) { // looping through the array and displaying each string, until hitting the end or 'stop'
-            if (userinput2[i].equals("stop")) break;
-            System.out.println(userinput2[i]);
-        }
-
-        // **********************
-        // Example of using a PrintWriter to handle console output
-        // **********************
-        // System.out is fine to write simple text output to the console.
-        // Use PrintWriter for real programs to easier internationalize: the process of designing an application,
-        // so that it can be adapted to various languages and regions without engineering changes.
-        System.out.println("Using PrintWriter to handle console output");
-        PrintWriter pw = new PrintWriter(System.out, true); // setting System.out as output stream and setting auto flushing on
-        pw.println("This is some text string"); // printing a string of text
-        int x = -5; // setting an integer variable with a value
-        pw.println(x); // printing an integer variable value
-
-        // **********************
-        // Displaying a text file: Showfile & ShowFile2
-        // **********************
-        // Requires a file to be specified in the directory of where the ShowFile class is placed.
-        // Then to be run via command line, for example: java ShowFile.java readme.txt
-        System.out.println("Run java ShowFile.java readme.txt to display a readme.txt filename");
-        System.out.println();
-
-        // **********************
-        // Writing to a file: CloseFile
-        // **********************
-        // Requires a source and destination file to be specified in the directory of where the CloseFile class is placed.
-        // Then to be run via command line, for example: java CopyFile.java filename1.txt filename2.txt
-        System.out.println("Writing to a file");
+//
+////        // alternative to see integer input
+////        System.out.println("Enter characters, 'q' to quit.");
+////        do {
+////            System.out.print(br.read());
+////        } while(br.read() != 113);
+////        System.out.println();
+//
+//        // **********************
+//        // Example to read a string from console
+//        // **********************
+//        System.out.println("Reading a string from console, with BufferedReader");
+//        String userinput;
+//        System.out.println("Enter some lines of text");
+//        System.out.println("Enter 'stop' to quit");
+//        do {
+//            userinput = br.readLine(); // using the BufferedReader (from the previous example) in combination with readLine, to read the input as a string
+//            System.out.println(userinput); // display the string
+//        } while(!userinput.equals("stop")); // upon inputting 'stop', quit the loop
+//        System.out.println();
+//
+//        // **********************
+//        // Example of a tiny text editor
+//        // **********************
+//        // Creating an array of String objects, reading up to 50 lines of text into the array, then displaying them.
+//        String userinput2[] = new String[50]; // creating an array of String objects
+//        System.out.println("Enter some lines of text");
+//        System.out.println("Enter 'stop' to quit");
+//        for (int i=0; i<50; i++) { // asking 50 times for a string input or breaking earlier upon input 'stop'
+//            userinput2[i] = br.readLine();
+//            if (userinput2[i].equals("stop")) break;
+//        }
+//        System.out.println("Here is your input:");
+//        for (int i=0; i<50; i++) { // looping through the array and displaying each string, until hitting the end or 'stop'
+//            if (userinput2[i].equals("stop")) break;
+//            System.out.println(userinput2[i]);
+//        }
+//
+//        // **********************
+//        // Example of using a PrintWriter to handle console output
+//        // **********************
+//        // System.out is fine to write simple text output to the console.
+//        // Use PrintWriter for real programs to easier internationalize: the process of designing an application,
+//        // so that it can be adapted to various languages and regions without engineering changes.
+//        System.out.println("Using PrintWriter to handle console output");
+//        PrintWriter pw = new PrintWriter(System.out, true); // setting System.out as output stream and setting auto flushing on
+//        pw.println("This is some text string"); // printing a string of text
+//        int x = -5; // setting an integer variable with a value
+//        pw.println(x); // printing an integer variable value
+//
+//        // **********************
+//        // Displaying a text file: Showfile & ShowFile2
+//        // **********************
+//        // Requires a file to be specified in the directory of where the ShowFile class is placed.
+//        // Then to be run via command line, for example: java ShowFile.java readme.txt
+//        System.out.println("Run java ShowFile.java readme.txt to display a readme.txt filename");
+//        System.out.println();
+//
+//        // **********************
+//        // Writing to a file: CloseFile
+//        // **********************
+//        // Requires a source and destination file to be specified in the directory of where the CloseFile class is placed.
+//        // Then to be run via command line, for example: java CopyFile.java filename1.txt filename2.txt
+//
+//        // **********************
+//        // Writing to a file: CloseFile2
+//        // **********************
+//        // Demonstrating use of two resources being managed by a single try statement
 
         // **********************
         // Writing to a file: CloseFile2
         // **********************
         // Demonstrating use of two resources being managed by a single try statement
+        System.out.println("Example of using two resources being managed by a single try statement");
+        Instanceof_ClassA obA = new Instanceof_ClassA();
+        Instanceof_ClassB obB = new Instanceof_ClassB();
+        Instanceof_ClassC obC = new Instanceof_ClassC();
+        Instanceof_ClassD obD = new Instanceof_ClassD();
+        if(obA instanceof Instanceof_ClassA)
+            System.out.println("obA is an instance of Instanceof_ClassA");
+        if(obB instanceof Instanceof_ClassB)
+            System.out.println("obB is an instance of Instanceof_ClassB");
+        if(obC instanceof Instanceof_ClassC)
+            System.out.println("obC is an instance of Instanceof_ClassC");
+        if(obC instanceof Instanceof_ClassA)
+            System.out.println("obC can be cast to Instanceof_ClassA");
+        if(obA instanceof Instanceof_ClassC)
+            System.out.println("obA can be cast to Instanceof_ClassC");
 
+        System.out.println();
+
+        Instanceof_ClassA ob; // to compare types of derived types
+
+        ob = obD; // Instanceof_ClassA reference to obD
+        System.out.println("ob now refers to obD");
+        if (ob instanceof Instanceof_ClassD)
+            System.out.println("ob is an instance of Instanceof_ClassD");
+        System.out.println();
+
+        ob = obC; // Instanceof_ClassA reference to obC
+        System.out.println("ob now refers to obC");
+        if (ob instanceof Instanceof_ClassD)
+            System.out.println("ob can be cast to Instanceof_ClassD");
+        else
+            System.out.println("ob can't be cast to Instanceof_ClassD");
+        if (ob instanceof Instanceof_ClassA)
+            System.out.println("ob can be cast to Instanceof_ClassA");
+        System.out.println();
+
+        // all objects can be cast to Object
+        if (obA instanceof Object)
+            System.out.println("obA may be cast to Object");
+        if (obB instanceof Object)
+            System.out.println("obB may be cast to Object");
+        if (obC instanceof Object)
+            System.out.println("obC may be cast to Object");
+        if (obD instanceof Object)
+            System.out.println("obD may be cast to Object");
+        System.out.println();
+
+        // **********************
+        // Example without and with static import
+        // **********************
+        System.out.println("Example without and with static import");
+
+        // without static import it's required to call the sqrt and tan methods (which are static methods), via their class Math
+        double num1= Math.sqrt(10.0);
+        double num2= Math.tan(50);
+        System.out.println("Square of 10 is: " + num1);
+        System.out.println("Tan of 50 is: " + num2);
+
+        // with static import
+        // after having specified (see up in the class): import static java.lang.Math.*;
+        // it's not longer required to specify the Math class to use the sqrt and tan method
+        // making long calculations easier readable and saving typing
+        double num3= sqrt(10.0); // require to specify the package name Math before the method sqrt
+        double num4= tan(50); // require to specify the package name Math before the method tan
+        System.out.println("Square of 10 is: " + num1);
+        System.out.println("Tan of 50 is: " + num2);
+
+        // **********************
+        // Example of (not) using this in constructors
+        // **********************
+        // See example classes MyClassWithoutThis and MyClassWithThis
 
     }
+
+
 }
