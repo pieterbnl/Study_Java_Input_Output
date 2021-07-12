@@ -102,6 +102,24 @@ import java.io.*;
 // Each time that it's called, it reads a single byte from the file and returns the byte as an integer value.
 // It returns -1 when it has reached the end of athe stream.
 
+// Automatically closing a file
+// JDK7 added the feature Automatic Resource Management (ARM) that offers a way to manage resources -such as file streams- by automating the closing process.
+// The ARM feature is based on an expanded version of the try statement.
+// The advantage of ARM is that it prevents a resource from inadvertently not being released after it's no longer needed, which potentially results in memory leaks.
+// ARM's general form: try (resource-specification) { // use the resource }
+// Resource-specification is a statement that declares and initializes a resource.
+// It consists of a variable declaration in which the variable is initialized with a reference to the object being managed.
+// When the try block ends, the resource is automatically released.
+// In case of a file this means that it's automatically closed, without requiring a call to close() explicitly.
+// This form of try -which can also include catch and finally clauses- is called the 'try-with-resources' statement.
+// Try-with-resources can only be used with resources that implement the (java.lang) AutoCloseable interface which defines close().
+// AutoClosable in turn is inherited by the (java.io) Closeable interface.
+// Both interfaces are implemented by the stream classes, which makes that try-with-resources can be used when working with (file) streams.
+//
+// It's possible to manage more than one resource within a single try statement, by separating each resource specification with a semicolon.
+// By using using the try with resources statement in combination with managing multiple resources in a single try statement, this greatly streamlines the code.
+// Also, an exception in a try block may lead to another exception (occurring when the resource is closed in the finally clause).
+// Normally, the original exception is lost. But with try-with-resources, it's suppressed and can be obtained by using getSuppressed() as defined by Throwable.
 
 public class Main {
 
@@ -183,6 +201,11 @@ public class Main {
         // Requires a source and destination file to be specified in the directory of where the CloseFile class is placed.
         // Then to be run via command line, for example: java CopyFile.java filename1.txt filename2.txt
         System.out.println("Writing to a file");
+
+        // **********************
+        // Writing to a file: CloseFile2
+        // **********************
+        // Demonstrating use of two resources being managed by a single try statement
 
 
     }
