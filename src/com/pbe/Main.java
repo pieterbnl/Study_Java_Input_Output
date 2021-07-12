@@ -1,10 +1,9 @@
 package com.pbe;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /** Study on Java I/O and related topics/keywords (try-with-resources, transient, volatile, instanceof, strictfp, assert)
+ * Following Java The Complete Reference by Herbert Schildt i.c.w. (Udemy) Java programming masterclass for software developers Tim Buchalka.
  @author Pieter Beernink
  @version 1.0
  @since 1.0
@@ -28,7 +27,8 @@ import java.io.InputStreamReader;
 //    Byte streams are defined by two class hierarchies, with at the top two abstract classes: InputStream & OutputStream.
 //    Each has several concrete subclasses that handle differences among various devices (disk files, network connections, memory buffers, ..).
 // 2. Character streams - a convenient means(and sometimes more efficient) for handling I/O of characters, using Unicode, allowing it to be internationalized.
-//     Java 1.0 only knew byte streams. Character streams where added in 1.1. Old code should be updated to take advantage of character streams.
+//    (Internationalization the process of designing an application so that it can be adapted to various languages and regions without engineering changes.)
+//    Java 1.0 only knew byte streams. Character streams where added in 1.1. Old code should be updated to take advantage of character streams.
 //    Character streams are defined by using two class hierarchies, of which at the top the two abstract classes Reader and Writer.
 //    They handle Unicode character streams. Java has several concrete subclasses of each.
 //
@@ -65,41 +65,80 @@ import java.io.InputStreamReader;
 // Reading Strings
 // BufferedReader class readLine() method is used to read a string from the keyboard: String readLine() throws IOException
 
+// Console output
+// Console output can be provided with print() and println(), defined by class PrintStream.
+// The type of object referenced by System.out, which is a byte stream.
+// PrintStream is an output stream derived from OutputStream, implementing the method write().
+// Write() writes the byte specified by byteval and can be used to output to the console as well.
+
+// PrintWriter class
+// System.out is best to be used for debugging purposes or sample programs.
+// For actual programs it's recommended to write to the console using PrintWriter stream.
+// It's a character based class, making internationalizing a program easier.
+// PrintWriter supports the print() and println() methods, which can be used the same way as with System.out
+// The PrintWriter methods can call the object's toString() to display results.
+// To write to the console: specify System.out for the output stream and automatic flushing.
+// Flushing the stream means to clear the stream of any element that may be or maybe not inside the stream.
+// It neither accepts any parameter nor returns any value.
+
+// Reading and Writing files (introduction only)
+// Two of the most often used stream classes which create byte streams linked to files:
+// 1. FileInputStream(String fileName) throws FileNotFoundException
+// 2. FileOutputStream(String fileName) throws FileNotFoundException
+//
+// To open a file, create an object of one of these classes by specifying the name of the file as an argument to the constructor.
+// For an input stream, a FileNotFoundException is thrown if the specified file does not exist.
+// For an output stream, a FileNotFoundException is thrown if the specified file cannot be opened or created.
+// When an output file is opened, any pre-existing file by the same name is destroyed.
+// Applications that use a security manager may throw a SecurityException if a security violation occurs when attempting to open a file.
+//
+// When being done with a file it must be closed by calling close(), which is implemented both by FileInputStream and FileOutputStream.
+// Closing a file releases the system resources allocated to the file and prevents unused resources remaining allocated.
+// Two basic approaches to close a file:
+// 1. Call close() explicitly when a file is no longer needed - used approach by all Java versions prior to JDK7
+// 2. Use the try-with-resources statement (added by JDK7), which automatically closes a file when it's no longer needed
+//
+// To read from a file, int read() throws IOException, that's defined within FileInputStream, can be used.
+// Each time that it's called, it reads a single byte from the file and returns the byte as an integer value.
+// It returns -1 when it has reached the end of athe stream.
+
+
 public class Main {
 
     public static void main(String[] args) throws IOException {
 
-//        // **********************
-//        // Example to read characters from console
-//        // **********************
-//        System.out.println("Reading characters from console, with BufferedReader");
-//        char c;
+        // **********************
+        // Example to read characters from console
+        // **********************
+        System.out.println("Reading characters from console, with BufferedReader");
+        char c;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // create a BufferedReader using System.in
+        System.out.println("Enter characters, 'q' to quit.");
+        do {
+            c = (char) br.read(); // read() will return an int value of the character, casting it to chart to display as character
+            System.out.print(c); // display character
+        } while(c != 'q'); // upon inputting q, quite loop
+        System.out.println();
+
+//        // alternative to see integer input
 //        System.out.println("Enter characters, 'q' to quit.");
 //        do {
-//            c = (char) br.read(); // read() will return an int value of the character, casting it to chart to display as character
-//            System.out.print(c); // display character
-//        } while(c != 'q'); // upon inputting q, quite loop
+//            System.out.print(br.read());
+//        } while(br.read() != 113);
 //        System.out.println();
-////        // alternative to see integer input
-////        System.out.println("Enter characters, 'q' to quit.");
-////        do {
-////            System.out.print(br.read());
-////        } while(br.read() != 113);
-////        System.out.println();
-//
-//        // **********************
-//        // Example to read a string from console
-//        // **********************
-//        System.out.println("Reading a string from console, with BufferedReader");
-//        String userinput;
-//        System.out.println("Enter some lines of text");
-//        System.out.println("Enter 'stop' to quit");
-//        do {
-//            userinput = br.readLine(); // using the BufferedReader (from the previous example) in combination with readLine, to read the input as a string
-//            System.out.println(userinput); // display the string
-//        } while(!userinput.equals("stop")); // upon inputting 'stop', quit the loop
-//        System.out.println();
+
+        // **********************
+        // Example to read a string from console
+        // **********************
+        System.out.println("Reading a string from console, with BufferedReader");
+        String userinput;
+        System.out.println("Enter some lines of text");
+        System.out.println("Enter 'stop' to quit");
+        do {
+            userinput = br.readLine(); // using the BufferedReader (from the previous example) in combination with readLine, to read the input as a string
+            System.out.println(userinput); // display the string
+        } while(!userinput.equals("stop")); // upon inputting 'stop', quit the loop
+        System.out.println();
 
         // **********************
         // Example of a tiny text editor
@@ -117,6 +156,34 @@ public class Main {
             if (userinput2[i].equals("stop")) break;
             System.out.println(userinput2[i]);
         }
+
+        // **********************
+        // Example of using a PrintWriter to handle console output
+        // **********************
+        // System.out is fine to write simple text output to the console.
+        // Use PrintWriter for real programs to easier internationalize: the process of designing an application,
+        // so that it can be adapted to various languages and regions without engineering changes.
+        System.out.println("Using PrintWriter to handle console output");
+        PrintWriter pw = new PrintWriter(System.out, true); // setting System.out as output stream and setting auto flushing on
+        pw.println("This is some text string"); // printing a string of text
+        int x = -5; // setting an integer variable with a value
+        pw.println(x); // printing an integer variable value
+
+        // **********************
+        // Displaying a text file: Showfile & ShowFile2
+        // **********************
+        // Requires a file to be specified in the directory of where the ShowFile class is placed.
+        // Then to be run via command line, for example: java ShowFile.java readme.txt
+        System.out.println("Run java ShowFile.java readme.txt to display a readme.txt filename");
+        System.out.println();
+
+        // **********************
+        // Writing to a file: CloseFile
+        // **********************
+        // Requires a source and destination file to be specified in the directory of where the CloseFile class is placed.
+        // Then to be run via command line, for example: java CopyFile.java filename1.txt filename2.txt
+        System.out.println("Writing to a file");
+
 
     }
 }
