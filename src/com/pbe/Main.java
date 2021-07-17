@@ -13,7 +13,6 @@ import static java.lang.Math.*;
 // *********************
 // Java I/O
 // *********************
-
 // Streams
 // Java.io package supports Java basic -cohesive and consistent- I/O (Input/Output) system, including file I/O.
 // Java provides strong, flexible support for I/O related to files and networks.
@@ -348,6 +347,4 @@ public class Main {
         // See example classes MyClassWithoutThis and MyClassWithThis
 
     }
-
-
 }
