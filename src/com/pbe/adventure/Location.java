@@ -26,7 +26,7 @@ public class Location {
 //        directions.put(direction, location);
 //    }
 
-    public int getLocationID() {
+    public int getID() {
         return locationID;
     }
 
@@ -38,5 +38,9 @@ public class Location {
     // Get directions of location
     public Map<String, Integer> getDirections() {
         return new HashMap<String, Integer>(directions);
+    }
+
+    protected void addDirection(String direction, int locationID) {
+        directions.put(direction, locationID);
     }
 }
