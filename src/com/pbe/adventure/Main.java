@@ -28,7 +28,7 @@ public class Main {
         vocabulary.put("EAST", "E");
 
         // Set starting location
-        int loc = 1;
+        int loc = 64;
 
         // Keep looping
         // The initial location with directions will be displayed

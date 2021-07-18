@@ -1,6 +1,7 @@
 package com.pbe.adventure;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 // Stores locations
@@ -11,13 +12,14 @@ public class Location {
     private final Map<String, Integer> directions; // Directions that are accessible from this location
 
     // Constructor
+    // Using LinkedHashMap to remain order in the locations in the file
     public Location(int locationID, String description, Map<String, Integer> directions) {
         this.locationID = locationID;
         this.description = description;
         if(directions != null) {
-            this.directions = new HashMap<String, Integer>(directions);
+            this.directions = new LinkedHashMap<String, Integer>(directions);
         } else {
-            this.directions = new HashMap<String, Integer>();
+            this.directions = new LinkedHashMap<String, Integer>();
         }
         this.directions.put("Q", 0); // Q is added to each location so that the user can choose to Quit at any time
     }
@@ -37,7 +39,7 @@ public class Location {
 
     // Get directions of location
     public Map<String, Integer> getDirections() {
-        return new HashMap<String, Integer>(directions);
+        return new LinkedHashMap<String, Integer>(directions);
     }
 
     protected void addDirection(String direction, int locationID) {

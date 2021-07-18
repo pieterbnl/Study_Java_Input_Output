@@ -185,6 +185,39 @@ import static java.lang.Math.*;
 // 1. You cannot use any instance variable of the constructors call to this().
 // 2. You cannot use super() and this() in the same constructor, because each must be the first statement in the constructor.
 
+// Reading from a file
+// In general, each read request made of a Reader causes a corresponding read request to be made of the underlying character or byte stream.
+// You can use BufferedReader to read from a file whose read() operations may be costly.
+// BufferedReader reads text from a character-input stream.
+// It buffers characters, for efficient reading of characters, arrays, and lines.
+// It's buffer size may be specified, or the default size may be used, which is typically large enough.
+// BufferedReader can be wrapped around any Reader, such as FileReaders and InputStreamReaders.
+// For example: BufferedReader someFile = new BufferedReader(new FileReader("some_file.txt"))
+// And as try with resources solution: try(BufferedReader someFile = new BufferedReader(new FileReader("some_file.txt"))) { .. }
+// Using BufferedReader will buffer the input from the specified file.
+// Without buffering, each invocation of read() or readLine() could cause bytes to be read from the file,
+// converted into characters, and then returned, which can be very inefficient.
+
+// Scanner vs BufferedReader
+// Scanner is used for parsing tokens from the contents of the stream while BufferedReader just reads the stream and does not do any special parsing.
+// It's possible to pass a BufferedReader to a Scanner as the source of characters to parse.
+// Because Scanner parses input data and BufferedReader reads sequence of characters, BufferedReader is faster than Scanner.
+// By using a buffer, BufferedReader avoid physical disk operations, making reading files more efficient.
+// BufferedReader has a larger buffer memory than Scanner (8192 chars vs 1024 chars).
+// BufferedReader is synchronous. Scanner is not.
+//
+// Recommended:
+// Use Scanner to parse a file. Use BufferedReader to read a file line by line.
+// Parsing = interpreting the given input as tokens (parts), allowing to give back specific parts directly as int, string, decimal, etc. Hence all those nextXxx() methods in Scanner class.
+// Reading = dumb streaming, keeps returning all characters.
+// These characters will have to be manually inspected when needing to to match or compose something useful (if needed).
+
+// FileWriter & BufferedWriter
+// BufferedWriter writes text to a character-output stream, buffering characters,
+// so as to provide for the efficient writing of single characters, arrays, and strings.
+// FileWriter is a convenience class for writing character files. It can be wrapped in BufferedWriter.
+// For example: BufferedWriter somefile = new BufferedWriter(new FileWriter("some_file.txt"))
+
 public class Main {
 
     public static void main(String[] args) throws IOException {
