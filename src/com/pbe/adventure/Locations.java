@@ -15,6 +15,22 @@ public class Locations implements Map<Integer, Location> {
     private static Map<Integer, Location> locations = new LinkedHashMap<Integer, Location>();
 
     public static void main(String[]args) throws IOException { // specify exception
+        try (DataOutputStream locationsFile = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("locations.dat")))) { // using .dat to indicate it's not text; writing binary data
+            for(Location location : locations.values()) { // iterate through list of values
+                locationsFile.writeInt(location.getID()); // writing as Integer
+                locationsFile.writeUTF(location.getDescription()); // effectively writes a String
+                System.out.println("Writing location " + location.getID() + " : " + location.getDescription());
+                System.out.println("Writing " + (location.getDirections().size() - 1) + " directions.");
+                locationsFile.writeInt(location.getDirections().size() - 1);
+                for (String direction : location.getDirections().keySet()) { // going through list of keys
+                    if (!direction.equalsIgnoreCase("Q")) { // make sure not progress any "Q" directions (= quit)
+                        System.out.println("\t\t" + direction + "," + location.getDirections().get(direction));
+                        locationsFile.writeUTF(direction); // write out direction
+                        locationsFile.writeInt(location.getDirections().get(direction)); // write where that direction goes
+                    }
+                }
+            }
+        }
 
         // Create a FileWriter object
         // Pass filename as parameter to constructor
@@ -25,21 +41,21 @@ public class Locations implements Map<Integer, Location> {
         // Therefore required to either specify or catch this exception
         // Applying a try with resources statement (a try statement that declares one or more resources)
         // Ensuring that each resource is closed at the end of the statement.
-        System.out.println("Locations main() is run");
-        try(BufferedWriter locationsFile = new BufferedWriter(new FileWriter("locations.txt"));
-            BufferedWriter directionsFile = new BufferedWriter(new FileWriter("directions.txt"))) {
-            for (Location location : locations.values()) { // loop through locations
-                locationsFile.write(location.getID() + "," + location.getDescription() + "\n");
-                for (String direction : location.getDirections().keySet()) { // loop through directions
-                    if(!direction.equalsIgnoreCase("Q")) {
-                        directionsFile.write(location.getID() + "," + direction + "," + location.getDirections().get(direction) + "\n");
-                    }
-                }
-            }
-        }
+//        System.out.println("Locations main() is run");
+//        try(BufferedWriter locationsFile = new BufferedWriter(new FileWriter("locations.txt"));
+//            BufferedWriter directionsFile = new BufferedWriter(new FileWriter("directions.txt"))) {
+//            for (Location location : locations.values()) { // loop through locations
+//                locationsFile.write(location.getID() + "," + location.getDescription() + "\n");
+//                for (String direction : location.getDirections().keySet()) { // loop through directions
+//                    if(!direction.equalsIgnoreCase("Q")) {
+//                        directionsFile.write(location.getID() + "," + direction + "," + location.getDirections().get(direction) + "\n");
+//                    }
+//                }
+//            }
+//        }
     }
 
-    // This block will be executed once, when the locations class is loaded
+    // This block will be executed once (before main()), when the locations class is loaded
     // It sets all available locations
     // Using FileReader wrapped in BufferedReader for a stream read of the locations file.
     // Using try by resources

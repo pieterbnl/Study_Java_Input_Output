@@ -218,6 +218,41 @@ import static java.lang.Math.*;
 // FileWriter is a convenience class for writing character files. It can be wrapped in BufferedWriter.
 // For example: BufferedWriter somefile = new BufferedWriter(new FileWriter("some_file.txt"))
 
+// More on streams
+// As mentioned earlier, Java performs I/O through Streams, defining 2 types:
+// 1. Byte Stream : provides a convenient means for handling I/O of 8-bit bytes.
+// 2. Character Stream : provides a convenient means for handling I/O of characters.
+// Character stream uses Unicode and therefore can be internationalized.
+//
+// All byte stream classes descent from InputStream and OutputStream, handling various devices such as disk files, network connections, etc.
+// I.e. InputStream/OutputStream are the superclasses of all byte streams classes representing an input/output stream of bytes.
+// There are many byte stream classes and all can be used in much the same way, only differing in the way they are constructed.
+// The most important ones:
+//
+// - FileInputStream/FileOutputStream (=reading/writing from a file)
+//   Reads/writes bytes from/to a file in a file system. Meant for reading/writing streams of raw bytes such as image data.
+//   For reading/writing streams of characters, consider using FileReader/FileWriter.
+//
+// - BufferedInputStream/BufferedOutputStream (=ensuring buffered reading/writing - of underlying stream)
+//   Implements a buffered input/output stream, allowing an application to read/write bytes to the underlying input/output stream.
+//   Without necessarily causing a call to the underlying system for each byte written.
+//
+// - DataInputStream/DataOutputStream (=reading/writing primitives as bytes  - of underlying stream)
+//   Lets an application write primitive Java data types to an output stream in a portable way.
+//   An application can then use a data input/output stream to read/write the data.
+//
+// - ObjectInputStream/ObjectOutputStream (=reading/writing objects of class as a single unit)
+//   Note: the process of translating an object into a format that can be stored and recreated = serialization
+//   Need to implement serialize interface.
+//   T.B.D later
+//
+// - PrintStream
+//   An output stream that adds functionality to another output stream, namely the ability to print representations of various data values conveniently.
+//   Contains the print() and println() method.
+//
+// DataOutputStream can be used to wrap BufferedOutputStream, which can wrap FileOutputStream:
+// DataOutputStream someFile = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("some_file.dat")))
+
 public class Main {
 
     public static void main(String[] args) throws IOException {
